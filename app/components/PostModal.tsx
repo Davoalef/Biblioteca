@@ -1,3 +1,5 @@
+// Elimine este modal, me parece redundante
+
 "use client";
 
 import { useEffect } from "react";
@@ -44,7 +46,6 @@ export default function PostModal({ post, onClose }: PostModalProps) {
         className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Imagen de cabecera */}
         <div className="relative w-full h-56 bg-slate-100 shrink-0">
           <Image
             src="/img/libro.webp"
@@ -74,7 +75,6 @@ export default function PostModal({ post, onClose }: PostModalProps) {
           </button>
         </div>
 
-        {/* Contenido scrolleable */}
         <div className="p-6 overflow-y-auto flex-1">
           <div className="flex items-center justify-between mb-4">
             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
@@ -97,7 +97,6 @@ export default function PostModal({ post, onClose }: PostModalProps) {
           </p>
         </div>
 
-        {/* Footer con acciones */}
         <div className="border-t border-slate-200 px-6 py-4 flex flex-col sm:flex-row gap-3 justify-end shrink-0">
           <button
             onClick={onClose}

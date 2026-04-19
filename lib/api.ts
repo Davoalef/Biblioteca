@@ -1,9 +1,9 @@
 import { Post, CreatePostInput } from "./types";
 
-const BASE_URL = process.env.PUBLIC_API_BASE_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 if (!BASE_URL) {
-  throw new Error("PUBLIC_API_BASE_URL no está definida en .env.local");
+  throw new Error("NEXT_PUBLIC_API_BASE_URL no está definida en .env.local");
 }
 
 async function handleResponse<T>(res: Response): Promise<T> {
@@ -14,6 +14,7 @@ async function handleResponse<T>(res: Response): Promise<T> {
 }
 
 export async function getPosts(): Promise<Post[]> {
+  await new Promise((resolve) => setTimeout(resolve, 2000)); ///////////// delay 
   const res = await fetch(`${BASE_URL}/posts`, {
     next: { revalidate: 60 },
   });
