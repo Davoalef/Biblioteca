@@ -1,54 +1,67 @@
-# 📚 Biblioteca Pública - Prueba Técnica Frontend
+# 📚 Biblioteca Pública — Prueba Técnica Frontend
 
-Aplicación web para una biblioteca pública que permite consultar, visualizar y crear registros de libros, construida con **Next.js 13+ App Router**, **TypeScript**, **Tailwind CSS** y **React Query**.
+Aplicación web para una biblioteca pública que permite consultar, visualizar y crear registros de libros. Construida con **Next.js 16**, **TypeScript**, **Tailwind CSS** y **TanStack Query**.
 
-> Prueba técnica para ORUS SYSTEM — consumo de la API pública [JSONPlaceholder](https://jsonplaceholder.typicode.com/).
+> Prueba técnica para **ORUS SYSTEM** — consumo de la API pública [JSONPlaceholder](https://jsonplaceholder.typicode.com/).
 
 ---
 
 ## 🚀 Demo
 
-🔗 **Deploy en Vercel:** [https://tu-proyecto.vercel.app](https://tu-proyecto.vercel.app)
+🔗 **Deploy en Vercel:** [https://biblioteca-ashen-two.vercel.app/](https://biblioteca-ashen-two.vercel.app/)
 
-📦 **Repositorio:** [https://github.com/tu-usuario/tu-proyecto](https://github.com/tu-usuario/tu-proyecto)
+📦 **Repositorio:** [https://github.com/Davoalef/Biblioteca](https://github.com/Davoalef/Biblioteca)
 
 ---
 
 ## 🧰 Stack Tecnológico
 
-| Categoría | Tecnología |
-|-----------|------------|
-| Framework | Next.js 14 (App Router) |
-| Lenguaje | TypeScript |
-| Estilos | Tailwind CSS |
-| Gestión de datos | TanStack Query (React Query) v5 |
-| Validación | Validación nativa de formularios |
-| Deploy | Vercel |
+| Categoría         | Tecnología                         |
+| ----------------- | ---------------------------------- |
+| Framework         | Next.js 16 (App Router)            |
+| Lenguaje          | TypeScript                         |
+| Estilos           | Tailwind CSS                       |
+| Gestión de datos  | TanStack Query (React Query) + fetch nativo |
+| Iconos            | lucide-react + react-icons         |
+| Fuentes           | Geist Sans / Geist Mono            |
+| Deploy            | Vercel                             |
 
 ---
 
 ## ✨ Funcionalidades implementadas
 
 ### 📖 Listado de libros (`/`)
-- Consumo del endpoint `GET /posts` con los primeros 100 registros.
-- Tabla responsive con columnas `id`, `title` y `body` (truncado a 50 caracteres).
-- **Paginación** en frontend con selector de 10, 20 o 50 items por página.
-- **Búsqueda por título** con debounce de 300 ms.
+- Consumo del endpoint `GET /posts` desde un **Server Component**.
+- Cards visuales con portada flotante, estilo "estantería de librería".
+- Columnas `id`, `title` y `body` (truncado a 50 caracteres).
+- **Paginación frontend** con ellipsis inteligente (`[1] [2] [3] ••• [10]` según posición).
+- **Selector** de cantidad por página: 10, 20 o 50 libros.
+- **Búsqueda por título** con debounce custom de 300 ms.
 - **Ordenamiento** ascendente/descendente por `id` o `title`.
-- Modal para ver contenido completo del body sin salir de la vista.
-- Botón para abrir modal de creación de nuevo registro.
+- **Sidebar sticky** con los controles de búsqueda, orden y paginación.
+- Botón "Ver más" que navega al detalle de cada libro.
 
 ### 🔍 Detalle del libro (`/posts/[id]`)
-- Ruta dinámica con fetch de `GET /posts/:id`.
-- Estados visuales de `loading` (skeleton) y `error` (con opción de reintentar).
-- Botón para regresar al listado.
+- Ruta dinámica que consume `GET /posts/:id`.
+- Layout tipo **ficha de producto e-commerce** (portada + metadata + acciones).
+- Estados nativos de Next.js: `loading.tsx`, `error.tsx` y `not-found.tsx`.
+- Metadata dinámica para SEO (`generateMetadata`).
+- **Carrusel de libros relacionados** con scroll por arrastre del mouse (drag-to-scroll).
+- Botón para regresar al catálogo.
 
-### ➕ Creación de registros
-- Modal con formulario validado (`title`, `body`, `userId` del 1 al 5).
-- Envío con `POST /posts` usando `useMutation`.
-- Feedback visual de loading, éxito y error.
-- El post creado se añade al cache local (la API no persiste los cambios).
-- Botón de cancelar que cierra el modal sin guardar.
+### ➕ Creación de registros (modal)
+- Modal accesible desde el navbar con botón "Nuevo libro".
+- Formulario con campos `title`, `body` y `userId` (select 1-5).
+- Validación de longitud mínima en cada campo.
+- Envío con `POST /posts` usando **`useMutation`** de React Query.
+- Feedback visual con 3 estados: loading (spinner), éxito (toast verde con ID) y error (banner rojo).
+- Cierre con tecla ESC y bloqueo de scroll del body.
+
+### 🎨 Landing page
+- **Banner hero** con degradado azul-morado, ilustración y CTAs.
+- **Features bar** con 4 beneficios (convertida en carrusel en móvil).
+- **Navbar sticky** con efecto glassmorphism (backdrop blur).
+- **Footer** con fondo de ondas decorativas, links de navegación y redes sociales.
 
 ---
 
@@ -56,43 +69,26 @@ Aplicación web para una biblioteca pública que permite consultar, visualizar y
 
 ### Server vs Client Components
 
-Se cumple con el requisito de usar al menos un componente de cada tipo:
+Se cumple el requisito mediante una separación consciente de responsabilidades:
 
-- **Server Components:**
-  - `app/page.tsx` — carga inicial del listado (fetch server-side).
-  - `app/posts/[id]/page.tsx` — renderiza el detalle del post.
+**Server Components (renderizado en servidor):**
+- `app/page.tsx` — Home, fetch del listado.
+- `app/posts/[id]/page.tsx` — detalle del post.
+- `app/layout.tsx` — estructura base.
+- `Banner.tsx`, `Footer.tsx`, `FeaturesBar.tsx` — UI estática.
 
-- **Client Components:**
-  - `PostsTable` — maneja búsqueda, ordenamiento y paginación.
-  - `CreatePostModal` — formulario con estado y mutación.
-  - `PostBodyModal` — modal para ver el body completo.
+**Client Components (interactivos):**
+- `PostsList.tsx` — estado de búsqueda, orden y paginación.
+- `CreatePostModal.tsx` — formulario + mutación con React Query.
+- `PostModal.tsx` — modal controlado.
+- `Navbar.tsx` — controla el estado del modal de creación.
+- `RelatedPosts.tsx` — carrusel con drag-to-scroll.
+- `providers.tsx` — `QueryClientProvider`.
 
-### Estructura de carpetas
+### Manejo de datos: estrategia híbrida
 
-```
-app/
-├── layout.tsx              # Root layout + providers
-├── page.tsx                # Listado principal (Server Component)
-├── providers.tsx           # QueryClientProvider
-├── posts/
-│   └── [id]/
-│       └── page.tsx        # Detalle del post
-├── components/
-│   ├── PostsTable.tsx
-│   ├── CreatePostModal.tsx
-│   ├── PostBodyModal.tsx
-│   ├── SearchBar.tsx
-│   ├── Pagination.tsx
-│   └── ui/
-│       ├── Skeleton.tsx
-│       └── ErrorState.tsx
-├── lib/
-│   ├── api.ts              # Funciones de fetch
-│   ├── types.ts            # Tipos de TypeScript
-│   └── hooks/
-│       └── useDebounce.ts
-└── globals.css
-```
+- **Fetch nativo** en Server Components para lecturas (home y detalle) — aprovecha el cache de Next.js (`revalidate: 60`).
+- **React Query (`useMutation`)** para la creación de posts — manejo declarativo de loading/éxito/error.
 
 ---
 
@@ -100,14 +96,22 @@ app/
 
 ### Prerrequisitos
 - Node.js 18.17 o superior
-- npm, yarn o pnpm
+- npm (o yarn / pnpm)
+
+### Variables de entorno
+
+Crea un archivo `.env.local` en la raíz con:
+
+```env
+NEXT_PUBLIC_API_BASE_URL=https://jsonplaceholder.typicode.com
+```
 
 ### Pasos
 
 ```bash
 # 1. Clonar el repositorio
-git clone https://github.com/tu-usuario/tu-proyecto.git
-cd tu-proyecto
+git clone https://github.com/Davoalef/Biblioteca.git
+cd Biblioteca
 
 # 2. Instalar dependencias
 npm install
@@ -121,54 +125,55 @@ npm run dev
 
 ### Scripts disponibles
 
-| Comando | Descripción |
-|---------|-------------|
-| `npm run dev` | Levanta el servidor de desarrollo |
-| `npm run build` | Genera el build de producción |
-| `npm start` | Ejecuta el build de producción |
-| `npm run lint` | Revisa el código con ESLint |
+| Comando         | Descripción                         |
+| --------------- | ----------------------------------- |
+| `npm run dev`   | Levanta el servidor de desarrollo   |
+| `npm run build` | Genera el build de producción       |
+| `npm start`     | Ejecuta el build de producción      |
+| `npm run lint`  | Revisa el código con ESLint         |
 
 ---
 
 ## 🎨 Decisiones técnicas
 
-- **React Query** en vez de fetch nativo porque cubre loading/error/cache de forma declarativa, evita lógica repetida y permite invalidar queries tras mutaciones.
-- **Paginación en frontend** ya que JSONPlaceholder devuelve los 100 posts en una sola llamada; paginar en cliente es más rápido y evita llamadas innecesarias.
-- **Debounce custom** (hook propio de 10 líneas) en lugar de instalar lodash, para mantener el bundle ligero.
-- **Tailwind CSS** por su rapidez de iteración y por evitar configurar un sistema de diseño completo para una prueba.
-- **Optimistic update en creación**: el nuevo post se agrega manualmente al cache con `setQueryData`, simulando persistencia ya que la API de JSONPlaceholder no guarda los cambios reales.
+- **Next.js App Router** por ser lo recomendado en Next.js 13+ y permitir mezclar Server y Client Components de forma natural.
+- **Estrategia híbrida de datos** (fetch nativo para Server, React Query para mutación) — demuestra dominio de ambos patrones y los usa en el caso apropiado de cada uno.
+- **Paginación frontend** ya que JSONPlaceholder devuelve los 100 posts en una sola llamada — paginar en cliente evita llamadas innecesarias y permite filtrado/orden sin refetch.
+- **Hook custom de debounce** en lugar de instalar `lodash` — 10 líneas vs 70 KB de dependencia.
+- **Convenciones de Next.js** (`loading.tsx`, `error.tsx`, `not-found.tsx`) en lugar de manejarlas manualmente con `useState` — aprovecha el Suspense y Error Boundary integrados.
+- **Tailwind CSS** por velocidad de iteración y para evitar crear un sistema de diseño completo en una prueba.
+- **lucide-react + react-icons**: lucide para iconos generales (flechas, checks, X), react-icons para logos de marcas (GitHub, LinkedIn) — lucide eliminó los iconos de marcas en su v1.
+- **Variables de entorno tipadas** (`NEXT_PUBLIC_API_BASE_URL`) con validación al inicio, para evitar configuraciones rotas en producción.
 
 ---
 
 ## ⚠️ Notas sobre la API
 
-JSONPlaceholder es una API **de simulación**:
+JSONPlaceholder es una **API de simulación**:
 
-- El endpoint `POST /posts` retorna un objeto con `id: 101`, pero **no persiste** el registro.
-- Por esta razón, los posts creados solo son visibles en la sesión actual gracias al cache de React Query.
-- Al recargar la página, los datos vuelven al estado original de la API.
+- `GET /posts` y `GET /posts/:id` devuelven datos reales consistentes.
+- `POST /posts` responde con **status 201** y el objeto creado con `id: 101`, pero **no persiste** los cambios.
 
 ---
 
 ## 📱 Responsive Design
 
-La interfaz está optimizada para:
+La interfaz se adapta a los siguientes breakpoints:
 
-- 📱 Mobile (< 640px) — tabla convertida en tarjetas apiladas.
-- 💻 Tablet (640px - 1024px) — tabla con columnas visibles.
-- 🖥️ Desktop (> 1024px) — layout completo con espaciado generoso.
+- 📱 **Mobile (< 640px):** 1 columna en el grid, cards apiladas, features en carrusel.
+- 🖥️ **Desktop (≥ 1024px):** grid de 2 columnas + sidebar sticky con controles.
 
 ---
 
 ## ✅ Checklist de requisitos
 
 ### Funcionales
-- [x] Listado de libros con id, title y body truncado
-- [x] Ver contenido completo (modal)
-- [x] Paginación frontend
+- [x] Listado de libros con `id`, `title` y `body` truncado a 50 caracteres
+- [x] Ver contenido completo (navegación a ruta de detalle)
+- [x] Paginación frontend con ellipsis inteligente
 - [x] Selector de cantidad por página (10, 20, 50)
 - [x] Búsqueda por título con debounce ≥ 300 ms
-- [x] Ordenamiento por id o title
+- [x] Ordenamiento por `id` o `title`
 - [x] Detalle en ruta `/posts/[id]`
 - [x] Botón para regresar al listado
 - [x] Estados de loading y error
@@ -177,24 +182,26 @@ La interfaz está optimizada para:
 - [x] Botón cancelar
 
 ### Técnicos obligatorios
-- [x] Next.js 13+ con App Router
+- [x] Next.js 13+ con App Router (**Next.js 16**)
 - [x] TypeScript
 - [x] Al menos 1 Server Component y 1 Client Component
-- [x] React Query para manejo de datos
+- [x] Manejo de datos: fetch nativo + React Query
 - [x] Diseño responsive
-- [x] Estados visuales claros (skeleton, error)
+- [x] Estados visuales claros (skeleton + error)
 
 ### Extras
 - [x] Tailwind CSS como librería UI
 - [x] Deploy en Vercel
+- [x] Carrusel drag-to-scroll
 
 ---
 
 ## 👤 Autor
 
-**Tu Nombre**
-- GitHub: [@tu-usuario](https://github.com/tu-usuario)
-- Email: tu-email@ejemplo.com
+**David Alejandro Obando** — *DavoAlef*
+
+- GitHub: [@Davoalef](https://github.com/Davoalef)
+- Repositorio: [Biblioteca](https://github.com/Davoalef/Biblioteca)
 
 ---
 
